@@ -64,10 +64,10 @@ class BlackJack(Frame):
         new_game_image_label.place(x=200, y=150)
         #Add new game button for load screen
         new_game_but = tk.Button(text="New Game", fg="white", bg="darkblue",
-                                 font='Helvetica 18 bold', command=lambda: [self.init_game()], width=10, height=5)
+                                 font='Helvetica 18 bold', command=lambda: [self.init_game()], width=10, bd=0, height=5)
         new_game_but.place(x=200, y=400)
         #Add restore game button for load screen
-        restore_game_but = tk.Button(text="Continue", fg="white", bg="darkblue", font='Helvetica 18 bold', command=lambda: [
+        restore_game_but = tk.Button(text="Continue", fg="white", bg="darkblue", font='Helvetica 18 bold', bd=0, command=lambda: [
                                      restore(self), self.init_game()], width=10, height=5)
         restore_game_but.place(x=435, y=400)
         #add all widgets to a list
@@ -113,6 +113,7 @@ class BlackJack(Frame):
         random.shuffle(self.deck)
 
     def dealer_play(self):
+
         self.kill_hit_hold_buttons()
         #define when dealer takes a hit
         while((self.dealer_card_totalA < 17 and self.dealer_card_totalA < 21) or (self.dealer_card_totala < 17 and self.dealer_card_totala < 21)):
@@ -305,17 +306,17 @@ class BlackJack(Frame):
         
         #Add button for New Game
         new_game_but = tk.Button(text="New Game\nFrom Scratch", fg="black", bg="white",
-                                 font='Helvetica 18 bold', command=lambda: [self.start_new_game()], width=10, height=5)
+                                 font='Helvetica 18 bold', command=lambda: [self.start_new_game()], bd=0,width=10, height=5)
         new_game_but.place(x=600, y=100)
 
         #Add button for Next Hand
         if(self.bank_account>=1):
             next_hand_but = tk.Button(text="Next\nHand", fg="white", bg="darkblue",
-                                    font='Helvetica 18 bold', command=lambda: [self.continue_game()], width=10, height=5)
+                                    font='Helvetica 18 bold', command=lambda: [self.continue_game()], bd = 0,width=10, height=5)
             next_hand_but.place(x=600, y=250)
 
         #Add Save and Quit
-        quit_but = tk.Button(text="Save\nAnd\nQuit", fg="black", bg="darkred", font='Helvetica 18 bold', command=lambda: [
+        quit_but = tk.Button(text="Save\nAnd\nQuit", fg="black", bg="darkred", font='Helvetica 18 bold', bd=0, command=lambda: [
                                      save(self), self.master.destroy()], width=10, height=5)
         quit_but.place(x=600, y=400)
         
@@ -326,14 +327,15 @@ class BlackJack(Frame):
         else:
             win_lose_string = 'Lost'
 
-        results_txt = tk.Text(height=3, width=20, fg="grey", bg="black", font='Helvetica 12 bold')
+        results_txt = tk.Text(height=3, width=20, fg="grey", bg="black", font='Helvetica 12 bold',bd=0)
         results_txt.insert(tk.END, f"You Have {win_lose_string}\n Your count: {self.user_final_count}\nDealer count: {self.dealer_final_count}")
         results_txt.tag_configure("center", justify='center')
         results_txt.tag_add("center", "1.0", "end")
         results_txt.place(x=10, y=175)
         
         #show the New Bank Balance to user
-        balance_txt = tk.Text(height=1, width=20, fg="grey", bg="black", font='Helvetica 12 bold')
+        balance_txt = tk.Text(height=1, width=20, fg="grey",
+                              bg="black", font='Helvetica 12 bold', bd=0)
         balance_txt.insert(tk.END, f"You Have: ${int(self.bank_account)}")
         balance_txt.tag_configure("center", justify='center')
         balance_txt.tag_add("center", "1.0", "end")
@@ -512,9 +514,9 @@ class BlackJack(Frame):
 
     def user_display_score(self):
         #show the card total for the user
-        us_show = tk.Text(height=1, width=20, fg="grey", bg="darkgreen", font='Helvetica 12 bold')
+        us_show = tk.Text(height=1, width=20, fg="grey", bd=0,bg="darkgreen", font='Helvetica 12 bold')
         us_show.insert(tk.END, f"You Have: {self.user_card_total_showing}")
-        us_show.tag_configure("center", justify='center')
+        us_show.tag_configure("center", justify='center',)
         us_show.tag_add("center", "1.0", "end")
         us_show.place(x=310, y=275)
         #add to list of screen contents
@@ -522,7 +524,7 @@ class BlackJack(Frame):
 
     def dealer_display_score(self):
         #show the card total for the dealer (minus the hold card)
-        ds_show = tk.Text(height=1, width=20, fg="grey", bg="darkgreen", font='Helvetica 12 bold')
+        ds_show = tk.Text(height=1, width=20, fg="grey", bd=0,bg="darkgreen", font='Helvetica 12 bold')
         ds_show.insert(tk.END, f"Dealer Shows: {self.dealer_card_total_showing}")
         ds_show.tag_configure("center", justify='center')
         ds_show.tag_add("center", "1.0", "end")
@@ -537,12 +539,24 @@ class BlackJack(Frame):
 
     def make_hit_hold_buttons(self):
         #make Hit and Hold Buttons
-        hit_but = tk.Button(text="HIT", fg="white", bg="#000099",
-                                        font='Helvetica 16 bold', command=lambda: [self.user_hit()], width=10, height=5)
-        hit_but.place(x=200, y=300)
 
-        hold_but = tk.Button(text="HOLD", fg="white", bg="darkred", font='Helvetica 16 bold', command=lambda: [self.dealer_play()], width=10, height=5)
-        hold_but.place(x=450, y=300)
+        image = Image.open("./images/hit.png")
+        i_width, i_height = image.size
+        image = ImageTk.PhotoImage(image.resize((int(i_width//20), int(i_height//20)), Image.LANCZOS))
+        hit_but = tk.Button(command=lambda: [self.user_hit()])
+        hit_but.config(image=image, bg="darkgreen", bd=0)
+        hit_but.image = image
+        hit_but.place(x=250, y=325)
+
+        image = Image.open("./images/stay.png")
+        i_width, i_height = image.size
+        image = ImageTk.PhotoImage(image.resize((int(i_width//20), int(i_height//20)), Image.LANCZOS))
+        hold_but = tk.Button(command=lambda: [self.dealer_play()])
+        hold_but.config(image=image, bg="darkgreen", bd=0)
+        hold_but.image = image
+        hold_but.place(x=400, y=325)
+
+
         self.play_screen_contents.append(hit_but)
         self.play_screen_contents.append(hold_but)
         self.hhbut.append(hit_but)
@@ -563,28 +577,56 @@ class BlackJack(Frame):
             if(self.bet_amt >= 1 and self.bet_amt+inc <= self.bank_account):
                 self.bet_amt+=inc
             self.make_betting_buttons()
-        #Adds the bet, increase bet 1/10, dec bet, and Check buttons:
-        add_one_but = tk.Button(text="Increase\nBet by 1", fg="white", bg="#000099", font='Helvetica 12 bold', command=lambda: [change_bet(1)], width=10, height=5)
-        add_one_but.place(x=200, y=300)
 
-        add_ten_but = tk.Button(text="Increase\nBet by 10", fg="white", bg="#000099", font='Helvetica 12 bold', command=lambda: [change_bet(10)], width=10, height=5)
+        #Adds the bet, increase bet 1/10, dec bet, and Check buttons:
+        image = Image.open('./images/bet1.png')
+        i_width, i_height = image.size        
+        image = ImageTk.PhotoImage(image.resize((i_width//6, i_height//6), Image.LANCZOS))
+        add_one_but = tk.Button(command=lambda: [change_bet(1)])
+        add_one_but.config(image=image, bg="darkgreen", bd=0)
+        add_one_but.image = image
+        add_one_but.place(x=190, y=300)
+
+        image = Image.open("./images/bet2.png")
+        i_width, i_height = image.size
+        image = ImageTk.PhotoImage(image.resize((i_width//6, i_height//6), Image.LANCZOS))
+        add_ten_but = tk.Button(command=lambda: [change_bet(10)])
+        add_ten_but.config(image=image, bg="darkgreen", bd=0)
+        add_ten_but.image = image
         add_ten_but.place(x=300, y=300)
 
-        bet_but = tk.Button(text=f"Place Bet\n${self.bet_amt}", fg="white", bg="#000066", font='Helvetica 12 bold', command=lambda: [self.bet(), self.start_dealing()], width=10, height=5)
-        bet_but.place(x=400, y=300)
+        image = Image.open("./images/placebet.png")
+        i_width, i_height = image.size
+        image = ImageTk.PhotoImage(image.resize((int(i_width//14.5), int(i_height//14.5)), Image.LANCZOS))
+        bet_but = tk.Button(command=lambda: [self.bet(), self.start_dealing()])
+        bet_but.config(image=image, bg="darkgreen", bd=0)
+        bet_but.image = image
+        bet_but.place(x=410, y=300)
 
-        dec_bet_but = tk.Button(text=f"Decrease\nBet", fg="white", bg="blue", font='Helvetica 12 bold', command=lambda: [change_bet(-1)], width=10, height=5)
-        dec_bet_but.place(x=500, y=300)
+        image = Image.open("./images/lowerbet.png")
+        i_width, i_height = image.size
+        image = ImageTk.PhotoImage(image.resize((int(i_width//11.25), int(i_height//11.25)), Image.LANCZOS))
+        dec_bet_but = tk.Button(command=lambda: [change_bet(-1)])
+        dec_bet_but.config(image=image, bg="darkgreen", bd=0)
+        dec_bet_but.image = image
+        dec_bet_but.place(x=520, y=300)
+
+        bet_amt_txt = tk.Text(height=1, width=20, fg="white", bg="darkgreen", bd=0, font='Helvetica 16 bold')
+        bet_amt_txt.insert(tk.END, f"Current Bet: {self.bet_amt}")
+        bet_amt_txt.tag_configure("center", justify='center')
+        bet_amt_txt.tag_add("center", "1.0", "end")
+        bet_amt_txt.place(x=280, y=420)
         #add all buttons to items on screen
         self.betting_buttons.append(add_one_but)
         self.betting_buttons.append(add_ten_but)
         self.betting_buttons.append(bet_but)
         self.betting_buttons.append(dec_bet_but)
+        self.betting_buttons.append(bet_amt_txt)
 
     def show_bank_account(self):
         #Shows bank account
         sba = tk.Text(height=3, width=10, fg="black",
-                      bg="darkgreen", font='Helvetica 12 bold')
+                      bg="darkgreen", font='Helvetica 12 bold', bd=0)
         sba.insert(tk.END, f"Your Bank\nBalance is\n${int(self.bank_account)}")
         sba.tag_configure("center", justify='center')
         sba.tag_add("center", "1.0", "end")
@@ -593,7 +635,7 @@ class BlackJack(Frame):
 
     def show_pot(self):
         #Adds the Pot Total to center of screen x and higher on y
-        pot = tk.Text(height=1, width=20, fg="white", bg="darkgreen", font='Helvetica 12 bold')
+        pot = tk.Text(height=1, width=20, fg="white", bg="darkgreen", bd=0, font='Helvetica 12 bold')
         pot.insert(tk.END, f"Total Pot: ${self.pot}")
         pot.tag_configure("center", justify='center')
         pot.tag_add("center", "1.0", "end")
@@ -606,10 +648,10 @@ class BlackJack(Frame):
         if(self.last_game_won):
             result_word='Won'
         else:
-            result_word='Loss'    
+            result_word='Lost'    
         #Shows Results of previous hand
         slhr = tk.Text(height=3, width=10, fg="black",
-                      bg="darkgreen", font='Helvetica 12 bold')
+                       bg="darkgreen", font='Helvetica 12 bold', bd=0)
         slhr.insert(tk.END, f"Last Hand\nYou {result_word}\n${self.last_game_pot}")
         slhr.tag_configure("center", justify='center')
         slhr.tag_add("center", "1.0", "end")
@@ -643,7 +685,7 @@ class BlackJack(Frame):
     def initUI(self):
         #makes window and starts teh game process
         self.master.title("Kevin's No Limit 5-Deck Black Jack")
-        self.master.geometry("800x600")
+        self.master.geometry("800x600+450+150")
         self.new_game_or_restore()
 
 def main():
