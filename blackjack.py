@@ -50,26 +50,36 @@ class BlackJack(Frame):
         self.end_match_screen_buttons=[]
         self.number_of_decks=5
         self.last_game_winnings=0
-
+        self.insurance_button = None
+        self.insurance_offered=False
+        self.has_insurance=False
         #variables above this line
         self.initUI()
 
     def new_game_or_restore(self):
-        #Add Spade cards image for load screen
+        #Add Spade cards image for load screen 
         new_game_image = Image.open('./images/honors_spade-14.png')
         ngi_width, ngi_height = new_game_image.size
-        new_game_image = ImageTk.PhotoImage(new_game_image.resize(
-            (ngi_width//6, ngi_height//6), Image.LANCZOS))
+        new_game_image = ImageTk.PhotoImage(new_game_image.resize((ngi_width//6, ngi_height//6), Image.LANCZOS))
         new_game_image_label = Label(image=new_game_image)
         new_game_image_label.image = new_game_image
         new_game_image_label.place(x=200, y=150)
-        #Add new game button for load screen
-        new_game_but = tk.Button(text="New Game", fg="white", bg="darkblue",
-                                 font='Helvetica 18 bold', command=lambda: [self.init_game()], width=10, bd=0, height=5)
+        #Add new game button for load screen (red button)
+# here i am
+        image = Image.open("./images/newgame.png")
+        i_width, i_height = image.size
+        image = ImageTk.PhotoImage(image.resize((int(i_width//20), int(i_height//20)), Image.LANCZOS))
+        new_game_but = tk.Button(command=lambda: [self.init_game()])
+        new_game_but.config(image=image, bg="darkgreen", bd=0)
+        new_game_but.image = image
         new_game_but.place(x=200, y=400)
-        #Add restore game button for load screen
-        restore_game_but = tk.Button(text="Continue", fg="white", bg="darkblue", font='Helvetica 18 bold', bd=0, command=lambda: [
-                                     restore(self), self.init_game()], width=10, height=5)
+        #Add restore game button for load screen (green button)
+        image = Image.open("./images/continue.png")
+        i_width, i_height = image.size
+        image = ImageTk.PhotoImage(image.resize((int(i_width//3.25), int(i_height//3.25)), Image.LANCZOS))
+        restore_game_but = tk.Button(command=lambda: [restore(self), self.init_game()])
+        restore_game_but.config(image=image, bg="darkgreen", bd=0)
+        restore_game_but.image = image
         restore_game_but.place(x=435, y=400)
         #add all widgets to a list
         self.load_screen_contents.append(new_game_image_label)
@@ -82,36 +92,37 @@ class BlackJack(Frame):
             button.destroy()
 
     def make_deck(self):
-        #make all the card values
-        card_values=[]
-        for i in range(2,15):
-            if(i==11):
-                card_string="J"
-            elif(i == 12):
-                card_string = "Q"
-            elif(i == 13):
-                card_string = "K"
-            elif(i == 14):
-                card_string = "A"
-            else:
-                card_string=str(i)
-            card_values.append(card_string)
-        #makes Clubs
-        for card in card_values:
-            self.deck.append(card+"C")
-        #makes Diamonds
-        for card in card_values:
-            self.deck.append(card+"D")
-        #makes Hearts
-        for card in card_values:
-            self.deck.append(card+"H")
-        #makes Spades
-        for card in card_values:
-            self.deck.append(card+"S")
-        #make number_of_decks amount of decks
-        self.deck=[card for card in self.deck for _ in range(self.number_of_decks)]   
-        #shuffle deck
-        random.shuffle(self.deck)
+        if(not self.deck):
+            #make all the card values
+            card_values=[]
+            for i in range(2,15):
+                if(i==11):
+                    card_string="J"
+                elif(i == 12):
+                    card_string = "Q"
+                elif(i == 13):
+                    card_string = "K"
+                elif(i == 14):
+                    card_string = "A"
+                else:
+                    card_string=str(i)
+                card_values.append(card_string)
+            #makes Clubs
+            for card in card_values:
+                self.deck.append(card+"C")
+            #makes Diamonds
+            for card in card_values:
+                self.deck.append(card+"D")
+            #makes Hearts
+            for card in card_values:
+                self.deck.append(card+"H")
+            #makes Spades
+            for card in card_values:
+                self.deck.append(card+"S")
+            #make number_of_decks amount of decks
+            self.deck=[card for card in self.deck for _ in range(self.number_of_decks)]   
+            #shuffle deck
+            random.shuffle(self.deck)
 
     def dealer_play(self):
 
@@ -252,8 +263,14 @@ class BlackJack(Frame):
             self.game_is_push = True
             
 
+    def make_insurance_offer(self):
+        print("making offer")
+        self.insurance_offered=True
+        self.make_hit_hold_buttons()
+
+
     def check_for_blackjack(self):
-        #checks users and dealer for a blackjack
+        #checks users for a blackjack
         if(self.user_cards[0][:-1] in ["J", "K", "Q", "10"] and self.user_cards[1][:-1] == "A") or (self.user_cards[1][:-1] in ["J", "K", "Q", "10"] and self.user_cards[0][:-1] == "A"):
             #blackjack for the user
             self.user_blkjack=True
@@ -261,6 +278,7 @@ class BlackJack(Frame):
         if(self.dealer_cards[0][:-1] in ["J", "K", "Q", "10"] and self.dealer_cards[1][:-1] == "A") or (self.dealer_cards[1][:-1] in ["J", "K", "Q", "10"] and self.dealer_cards[0][:-1] == "A"):
             #blackjack for the dealer
             self.dealer_blkjack = True
+
         if self.dealer_blkjack and self.user_blkjack:
             self.game_is_push = True
             self.hand_results()
@@ -277,6 +295,8 @@ class BlackJack(Frame):
         #find the amount of winnings and add it to the bank account
         if(self.user_blkjack and not self.game_is_push):
             self.winnings=self.pot*1.5 #pays 3:2
+        elif(self.dealer_blkjack and self.has_insurance):
+            self.winnings=self.pot
         elif (self.user_wins):
             self.winnings=self.pot
         elif(self.game_is_push):
@@ -309,19 +329,32 @@ class BlackJack(Frame):
         new_game_image_label.place(x=200, y=175)
         
         #Add button for New Game
-        new_game_but = tk.Button(text="New Game\nFrom Scratch", fg="black", bg="white",
-                                 font='Helvetica 18 bold', command=lambda: [self.start_new_game()], bd=0,width=10, height=5)
+        image = Image.open("./images/newgame.png")
+        i_width, i_height = image.size
+        image = ImageTk.PhotoImage(image.resize((int(i_width//20), int(i_height//20)), Image.LANCZOS))
+        new_game_but = tk.Button(command=lambda: [self.start_new_game()])
+        new_game_but.config(image=image, bg="darkgreen", bd=0)
+        new_game_but.image = image
         new_game_but.place(x=600, y=100)
 
         #Add button for Next Hand
         if(self.bank_account>=1):
-            next_hand_but = tk.Button(text="Next\nHand", fg="white", bg="darkblue",
-                                    font='Helvetica 18 bold', command=lambda: [self.continue_game()], bd = 0,width=10, height=5)
+            image = Image.open("./images/nexthand.png")
+            i_width, i_height = image.size
+            image = ImageTk.PhotoImage(image.resize((int(i_width//3.25), int(i_height//3.25)), Image.LANCZOS))
+            next_hand_but = tk.Button(command=lambda: [self.continue_game()])
+            next_hand_but.config(image=image, bg="darkgreen", bd=0)
+            next_hand_but.image = image
+            next_hand_but.place(x=600, y=100)
             next_hand_but.place(x=600, y=250)
 
         #Add Save and Quit
-        quit_but = tk.Button(text="Save\nAnd\nQuit", fg="black", bg="darkred", font='Helvetica 18 bold', bd=0, command=lambda: [
-                                     save(self), self.master.destroy()], width=10, height=5)
+        image = Image.open("./images/save.png")
+        i_width, i_height = image.size
+        image = ImageTk.PhotoImage(image.resize((int(i_width//20), int(i_height//20)), Image.LANCZOS))
+        quit_but = tk.Button(command=lambda: [save(self), self.master.destroy()])
+        quit_but.config(image=image, bg="darkgreen", bd=0)
+        quit_but.image = image
         quit_but.place(x=600, y=400)
         
         #show the Final score to user        
@@ -338,8 +371,8 @@ class BlackJack(Frame):
         results_txt.place(x=10, y=175)
 
         if(self.user_blkjack):
-            results_txt = tk.Text(height=1, width=20, fg="grey", bg="black", font='Helvetica 12 bold',bd=0)
-            results_txt.insert(tk.END, f"You won by BLACKJACK")
+            results_txt = tk.Text(height=2, width=20, fg="grey", bg="black", font='Helvetica 12 bold',bd=0)
+            results_txt.insert(tk.END, f"You won by\nBLACKJACK")
             results_txt.tag_configure("center", justify='center')
             results_txt.tag_add("center", "1.0", "end")
             results_txt.place(x=10, y=250)
@@ -464,8 +497,15 @@ class BlackJack(Frame):
         self.make_user_card_show(uc2)
         self.update_card_points_user()
 
-        self.build_play_screen()     
-        self.check_for_blackjack()
+        self.build_play_screen()
+
+        if dc2[0]=="A":
+            self.make_insurance_offer()
+    
+            
+        else:
+            self.check_for_blackjack()
+            
         
     def make_user_card_show(self, card):
         card_image = Image.open(f'./images/{card}.png')
@@ -563,7 +603,7 @@ class BlackJack(Frame):
         hit_but = tk.Button(command=lambda: [self.user_hit()])
         hit_but.config(image=image, bg="darkgreen", bd=0)
         hit_but.image = image
-        hit_but.place(x=250, y=325)
+        hit_but.place(x=175, y=325)
 
         image = Image.open("./images/stay.png")
         i_width, i_height = image.size
@@ -571,13 +611,52 @@ class BlackJack(Frame):
         hold_but = tk.Button(command=lambda: [self.dealer_play()])
         hold_but.config(image=image, bg="darkgreen", bd=0)
         hold_but.image = image
-        hold_but.place(x=400, y=325)
+        hold_but.place(x=325, y=325)
+
+        image = Image.open("./images/dd.png")
+        i_width, i_height = image.size
+        image = ImageTk.PhotoImage(image.resize((int(i_width//3.25), int(i_height//3.25)), Image.LANCZOS))
+        dd_but = tk.Button(command=lambda: [self.double_down()])
+        dd_but.config(image=image, bg="darkgreen", bd=0)
+        dd_but.image = image
+        dd_but.place(x=475, y=325)
+
+        if (self.insurance_offered and len(self.user_cards)==2):    
+            image = Image.open("./images/gi.png")
+            i_width, i_height = image.size
+            image = ImageTk.PhotoImage(image.resize(
+                (int(i_width//2), int(i_height//2)), Image.LANCZOS))
+            bi_but = tk.Button(
+                command=lambda: [self.buy_insurance(), self.kill_buy_ins_but(), self.check_for_blackjack()])
+            bi_but.config(image=image, bg="darkgreen", bd=0)
+            bi_but.image = image
+            bi_but.place(x=600, y=325)
+            self.insurance_button=bi_but
 
 
         self.play_screen_contents.append(hit_but)
         self.play_screen_contents.append(hold_but)
+        self.play_screen_contents.append(dd_but)
         self.hhbut.append(hit_but)
         self.hhbut.append(hold_but)
+        self.hhbut.append(dd_but)
+
+    def kill_buy_ins_but(self):
+        self.insurance_button.destroy()
+
+    def buy_insurance(self):
+        self.has_insurance=True
+        self.bank_account-=self.bet_amt
+        self.insurance_offered = False
+        self.update_card_points_user()
+        self.update_card_points_dealer()
+        self.build_play_screen()
+
+    def double_down(self):
+        self.bank_account-=self.bet_amt
+        self.pot*=2
+        self.user_hit()
+        self.dealer_play()
 
     def kill_hit_hold_buttons(self):
         for button in self.hhbut:
