@@ -49,6 +49,7 @@ class BlackJack(Frame):
         self.winnings=0
         self.end_match_screen_buttons=[]
         self.number_of_decks=5
+        self.last_game_winnings=0
 
         #variables above this line
         self.initUI()
@@ -283,6 +284,7 @@ class BlackJack(Frame):
         self.bank_account+=self.winnings
         self.kill_game_screen()
         self.show_end_match_choices()
+        self.last_game_winnings=self.winnings
     
     def kill_game_screen(self):
         for button in self.play_screen_contents:
@@ -652,7 +654,7 @@ class BlackJack(Frame):
         #Shows Results of previous hand
         slhr = tk.Text(height=3, width=10, fg="black",
                        bg="darkgreen", font='Helvetica 12 bold', bd=0)
-        slhr.insert(tk.END, f"Last Hand\nYou {result_word}\n${self.last_game_pot}")
+        slhr.insert(tk.END, f"Last Hand\nYou {result_word}\n${self.last_game_winnings}")
         slhr.tag_configure("center", justify='center')
         slhr.tag_add("center", "1.0", "end")
         slhr.place(x=510, y=230)
@@ -699,17 +701,21 @@ def refresh(root):
     main()
 
 def restore(self):
-    #restores the bank account from last session
+    #restores the last game info and bank account from last session
     if path.isfile("saveblkjack.json"):
         with open("saveblkjack.json", "r") as save_file:
             data = json.load(save_file)
-            self.bank_account = data
+            self.bank_account = data[0]
+            self.last_game_pot = data[1]
+            self.last_game_won = data[2]
+            self.last_game_winnings= data[3]
         pass
 
 def save(self):
-    #saves the bank account amount
+    #saves the listed varibles amount
+    save_data=[self.bank_account,self.last_game_pot,self.last_game_won,self.last_game_winnings]
     with open("saveblkjack.json", "w") as save_file:
-        json.dump(self.bank_account, save_file)
+        json.dump(save_data, save_file)
 
 if __name__ == '__main__':
     main()
