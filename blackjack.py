@@ -631,7 +631,7 @@ class BlackJack(Frame):
                 (int(i_width//2), int(i_height//2)), Image.LANCZOS))
             bi_but = tk.Button(
                 command=lambda: [self.buy_insurance(), self.kill_buy_ins_but(), self.check_for_blackjack()])
-            bi_but.config(image=image, bg="darkgreen", bd=0)
+            bi_but.config(image=image, bg="white", bd=0)
             bi_but.image = image
             bi_but.place(x=600, y=325)
             self.insurance_button=bi_but
