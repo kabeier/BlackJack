@@ -265,7 +265,6 @@ class BlackJack(Frame):
             
 
     def make_insurance_offer(self):
-        print("making offer")
         self.insurance_offered=True
         self.make_hit_hold_buttons()
 
@@ -756,12 +755,12 @@ class BlackJack(Frame):
         else:
             result_word='Lost'    
         #Shows Results of previous hand
-        slhr = tk.Text(height=3, width=10, fg="black",
+        slhr = tk.Text(height=4, width=13, fg="black",
                        bg="darkgreen", font='Helvetica 12 bold', bd=0)
-        slhr.insert(tk.END, f"Last Hand\nYou {result_word}\n${int(self.last_game_winnings)}")
+        slhr.insert(tk.END, f"Last Hand\nYou {result_word}\nYour Earnings: \n${int(self.last_game_winnings)}")
         slhr.tag_configure("center", justify='center')
         slhr.tag_add("center", "1.0", "end")
-        slhr.place(x=510, y=230)
+        slhr.place(x=510, y=210)
         self.play_screen_contents.append(slhr)
 
     def build_initial_screen(self):
