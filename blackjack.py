@@ -582,7 +582,7 @@ class BlackJack(Frame):
         us_show.insert(tk.END, f"You Have: {self.user_card_total_showing}")
         us_show.tag_configure("center", justify='center',)
         us_show.tag_add("center", "1.0", "end")
-        us_show.place(x=310, y=275)
+        us_show.place(x=310, y=265)
         #add to list of screen contents
         self.play_screen_contents.append(us_show)
 
@@ -592,7 +592,7 @@ class BlackJack(Frame):
         ds_show.insert(tk.END, f"Dealer Shows: {self.dealer_card_total_showing}")
         ds_show.tag_configure("center", justify='center')
         ds_show.tag_add("center", "1.0", "end")
-        ds_show.place(x=310, y=225)
+        ds_show.place(x=310, y=215)
         #add to list of screen contents
         self.play_screen_contents.append(ds_show)
 
@@ -607,7 +607,8 @@ class BlackJack(Frame):
         image = Image.open("./images/hit.png")
         i_width, i_height = image.size
         image = ImageTk.PhotoImage(image.resize((int(i_width//20), int(i_height//20)), Image.LANCZOS))
-        hit_but = tk.Button(command=lambda: [self.user_hit()])
+        hit_but = tk.Button(
+            command=lambda: [self.user_hit(), self.kill_buy_ins_but()])
         hit_but.config(image=image, bg="darkgreen", bd=0)
         hit_but.image = image
         hit_but.place(x=175, y=325)
@@ -615,7 +616,8 @@ class BlackJack(Frame):
         image = Image.open("./images/stay.png")
         i_width, i_height = image.size
         image = ImageTk.PhotoImage(image.resize((int(i_width//20), int(i_height//20)), Image.LANCZOS))
-        hold_but = tk.Button(command=lambda: [self.dealer_play()])
+        hold_but = tk.Button(
+            command=lambda: [self.dealer_play(),self.kill_buy_ins_but()])
         hold_but.config(image=image, bg="darkgreen", bd=0)
         hold_but.image = image
         hold_but.place(x=325, y=325)
@@ -623,7 +625,8 @@ class BlackJack(Frame):
         image = Image.open("./images/dd.png")
         i_width, i_height = image.size
         image = ImageTk.PhotoImage(image.resize((int(i_width//3.25), int(i_height//3.25)), Image.LANCZOS))
-        dd_but = tk.Button(command=lambda: [self.double_down()])
+        dd_but = tk.Button(
+            command=lambda: [self.double_down(), self.kill_buy_ins_but()])
         dd_but.config(image=image, bg="darkgreen", bd=0)
         dd_but.image = image
         dd_but.place(x=475, y=325)
@@ -637,7 +640,7 @@ class BlackJack(Frame):
                 command=lambda: [self.buy_insurance(), self.kill_buy_ins_but(), self.check_for_blackjack()])
             bi_but.config(image=image, bg="white", bd=0)
             bi_but.image = image
-            bi_but.place(x=600, y=325)
+            bi_but.place(x=620, y=335)
             self.insurance_button=bi_but
 
 
@@ -649,7 +652,8 @@ class BlackJack(Frame):
         self.hhbut.append(dd_but)
 
     def kill_buy_ins_but(self):
-        self.insurance_button.destroy()
+        if(self.insurance_button):
+            self.insurance_button.destroy()
 
     def buy_insurance(self):
         self.has_insurance=True
@@ -733,7 +737,7 @@ class BlackJack(Frame):
         sba.insert(tk.END, f"Your Bank\nBalance is\n${int(self.bank_account)}")
         sba.tag_configure("center", justify='center')
         sba.tag_add("center", "1.0", "end")
-        sba.place(x=200, y=230)
+        sba.place(x=200, y=220)
         self.play_screen_contents.append(sba)
 
     def show_pot(self):
@@ -742,7 +746,7 @@ class BlackJack(Frame):
         pot.insert(tk.END, f"Total Pot: ${int(self.pot)}")
         pot.tag_configure("center", justify='center')
         pot.tag_add("center", "1.0", "end")
-        pot.place(x=310, y=250)
+        pot.place(x=310, y=240)
         self.play_screen_contents.append(pot)
 
     def show_last_hand_result(self):
