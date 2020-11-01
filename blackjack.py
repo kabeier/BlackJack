@@ -360,22 +360,24 @@ class BlackJack(Frame):
         #show the Final score to user        
         win_lose_string=''
         if(self.user_wins):
-            win_lose_string = 'Won $'+str(self.winnings)
+            win_lose_string = 'You Have Won $'+str(self.winnings)
+        elif(self.game_is_push or (self.dealer_blkjack and self.has_insurance)):
+            win_lose_string = 'It was a Draw'
         else:
-            win_lose_string = 'Lost'
-
+            win_lose_string = 'You Have Lost'
         results_txt = tk.Text(height=3, width=20, fg="grey", bg="black", font='Helvetica 12 bold',bd=0)
-        results_txt.insert(tk.END, f"You Have {win_lose_string}\n Your count: {self.user_final_count}\nDealer count: {self.dealer_final_count}")
+        results_txt.insert(tk.END, f"{win_lose_string}\n Your count: {self.user_final_count}\nDealer count: {self.dealer_final_count}")
         results_txt.tag_configure("center", justify='center')
         results_txt.tag_add("center", "1.0", "end")
         results_txt.place(x=10, y=175)
 
         if(self.user_blkjack):
-            results_txt = tk.Text(height=2, width=20, fg="grey", bg="black", font='Helvetica 12 bold',bd=0)
-            results_txt.insert(tk.END, f"You won by\nBLACKJACK")
-            results_txt.tag_configure("center", justify='center')
-            results_txt.tag_add("center", "1.0", "end")
-            results_txt.place(x=10, y=250)
+            results_txt2 = tk.Text(height=2, width=20, fg="grey", bg="black", font='Helvetica 12 bold',bd=0)
+            results_txt2.insert(tk.END, f"You won by\nBLACKJACK")
+            results_txt2.tag_configure("center", justify='center')
+            results_txt2.tag_add("center", "1.0", "end")
+            results_txt2.place(x=10, y=250)
+            self.end_match_screen_buttons.append(results_txt2)
         
         #show the New Bank Balance to user
         balance_txt = tk.Text(height=1, width=20, fg="grey",
@@ -388,6 +390,7 @@ class BlackJack(Frame):
         #add all widgets to a list
         self.end_match_screen_buttons.append(balance_txt)
         self.end_match_screen_buttons.append(results_txt)
+        
         self.end_match_screen_buttons.append(new_game_but)
         self.end_match_screen_buttons.append(next_hand_but)
         self.end_match_screen_buttons.append(quit_but)
