@@ -321,18 +321,18 @@ class BlackJack(Frame):
         else:
             win_lose_string = 'Lost'
 
-        results_txt = tk.Text(height=3, width=20, fg="grey", bg="darkgreen", font='Helvetica 12 bold')
-        results_txt.insert(tk.END, f"You Have {win_lose_string}\n Your count: {self.user_final_count}\nDealer count:{self.dealer_final_count}")
+        results_txt = tk.Text(height=3, width=20, fg="grey", bg="black", font='Helvetica 12 bold')
+        results_txt.insert(tk.END, f"You Have {win_lose_string}\n Your count: {self.user_final_count}\nDealer count: {self.dealer_final_count}")
         results_txt.tag_configure("center", justify='center')
         results_txt.tag_add("center", "1.0", "end")
-        results_txt.place(x=10, y=250)
+        results_txt.place(x=10, y=175)
         
         #show the New Bank Balance to user
-        balance_txt = tk.Text(height=1, width=20, fg="grey", bg="darkgreen", font='Helvetica 12 bold')
-        balance_txt.insert(tk.END, f"You Have: ${self.bank_account}")
+        balance_txt = tk.Text(height=1, width=20, fg="grey", bg="black", font='Helvetica 12 bold')
+        balance_txt.insert(tk.END, f"You Have: ${int(self.bank_account)}")
         balance_txt.tag_configure("center", justify='center')
         balance_txt.tag_add("center", "1.0", "end")
-        balance_txt.place(x=10, y=450)
+        balance_txt.place(x=10, y=375)
         
         #add all widgets to a list
         self.end_match_screen_buttons.append(balance_txt)
@@ -580,7 +580,7 @@ class BlackJack(Frame):
         #Shows bank account
         sba = tk.Text(height=3, width=10, fg="black",
                       bg="darkgreen", font='Helvetica 12 bold')
-        sba.insert(tk.END, f"Your Bank\nBalance is\n${self.bank_account}")
+        sba.insert(tk.END, f"Your Bank\nBalance is\n${int(self.bank_account)}")
         sba.tag_configure("center", justify='center')
         sba.tag_add("center", "1.0", "end")
         sba.place(x=200, y=230)
