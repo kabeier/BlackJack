@@ -334,6 +334,13 @@ class BlackJack(Frame):
         results_txt.tag_configure("center", justify='center')
         results_txt.tag_add("center", "1.0", "end")
         results_txt.place(x=10, y=175)
+
+        if(self.user_blkjack):
+            results_txt = tk.Text(height=1, width=20, fg="grey", bg="black", font='Helvetica 12 bold',bd=0)
+            results_txt.insert(tk.END, f"You won by BLACKJACK")
+            results_txt.tag_configure("center", justify='center')
+            results_txt.tag_add("center", "1.0", "end")
+            results_txt.place(x=10, y=250)
         
         #show the New Bank Balance to user
         balance_txt = tk.Text(height=1, width=20, fg="grey",
@@ -352,25 +359,30 @@ class BlackJack(Frame):
         self.end_match_screen_buttons.append(new_game_image_label)
         
     def kill_end_match_choices(self):
+        #clears end match screen
         for button in self.end_match_screen_buttons:
             button.destroy()
     
     def kill_card_images(self):
+        #removes all the card images
         for card in self.user_cards_images:
             card.destroy()
         for card in self.dealer_cards_images:
             card.destroy()
 
     def start_new_game(self):
+        #start a new game from scratch
         refresh(self.root)
 
     def continue_game(self):
+        #play next match
         self.kill_end_match_choices()
         self.kill_card_images()
         self.reset_vars()
         self.build_initial_screen()
 
     def reset_vars(self):
+        #reset varibles needed to play another match
         self.load_screen_contents = []
         self.pot = 0
         self.play_screen_contents = []
@@ -505,6 +517,7 @@ class BlackJack(Frame):
         #self.play_screen_contents.append(card_image_label)
 
     def pick_card(self):
+        #pulls card from the deck and if the cards run out make a new deck
         if(len(self.deck)<=1):
             self.make_deck()
         return(self.deck.pop())
@@ -709,11 +722,12 @@ def restore(self):
             self.last_game_pot = data[1]
             self.last_game_won = data[2]
             self.last_game_winnings= data[3]
+            self.deck=data[4]
         pass
 
 def save(self):
     #saves the listed varibles amount
-    save_data=[self.bank_account,self.last_game_pot,self.last_game_won,self.last_game_winnings]
+    save_data=[self.bank_account,self.last_game_pot,self.last_game_won,self.last_game_winnings,self.deck]
     with open("saveblkjack.json", "w") as save_file:
         json.dump(save_data, save_file)
 
