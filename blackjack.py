@@ -30,6 +30,7 @@ class BlackJack(Frame):
         self.user_card_totalA = 0
         self.user_card_total_showing = ''
         self.last_game_won = False
+        self.last_game_push = False
         self.last_game_pot = 0
         self.betting_buttons = []
         self.dealer_cards_images=[]
@@ -292,6 +293,7 @@ class BlackJack(Frame):
     def hand_results(self):
         self.last_game_pot=self.pot
         self.last_game_won=self.user_wins
+        self.last_game_push = self.game_is_push
         #find the amount of winnings and add it to the bank account
         if(self.user_blkjack and not self.game_is_push):
             self.winnings=self.pot*1.5 #pays 3:2
@@ -453,6 +455,9 @@ class BlackJack(Frame):
         self.dealer_final_count = None
         self.winnings = 0
         self.end_match_screen_buttons = []
+        self.insurance_button = None
+        self.insurance_offered=False
+        self.has_insurance=False
 
     def user_hit(self):
         #when user decides to hit
@@ -735,7 +740,7 @@ class BlackJack(Frame):
     def show_pot(self):
         #Adds the Pot Total to center of screen x and higher on y
         pot = tk.Text(height=1, width=20, fg="white", bg="darkgreen", bd=0, font='Helvetica 12 bold')
-        pot.insert(tk.END, f"Total Pot: ${self.pot}")
+        pot.insert(tk.END, f"Total Pot: ${int(self.pot)}")
         pot.tag_configure("center", justify='center')
         pot.tag_add("center", "1.0", "end")
         pot.place(x=310, y=250)
@@ -746,12 +751,14 @@ class BlackJack(Frame):
         result_word=''
         if(self.last_game_won):
             result_word='Won'
+        elif(self.last_game_push):
+            result_word='Tied'
         else:
             result_word='Lost'    
         #Shows Results of previous hand
         slhr = tk.Text(height=3, width=10, fg="black",
                        bg="darkgreen", font='Helvetica 12 bold', bd=0)
-        slhr.insert(tk.END, f"Last Hand\nYou {result_word}\n${self.last_game_winnings}")
+        slhr.insert(tk.END, f"Last Hand\nYou {result_word}\n${int(self.last_game_winnings)}")
         slhr.tag_configure("center", justify='center')
         slhr.tag_add("center", "1.0", "end")
         slhr.place(x=510, y=230)
@@ -806,12 +813,13 @@ def restore(self):
             self.last_game_pot = data[1]
             self.last_game_won = data[2]
             self.last_game_winnings= data[3]
-            self.deck=data[4]
+            self.last_game_push = data[4]
+            self.deck=data[5]
         pass
 
 def save(self):
     #saves the listed varibles amount
-    save_data=[self.bank_account,self.last_game_pot,self.last_game_won,self.last_game_winnings,self.deck]
+    save_data=[self.bank_account,self.last_game_pot,self.last_game_won,self.last_game_winnings,self.last_game_push,self.deck]
     with open("saveblkjack.json", "w") as save_file:
         json.dump(save_data, save_file)
 
