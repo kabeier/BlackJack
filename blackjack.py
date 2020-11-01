@@ -125,7 +125,9 @@ class BlackJack(Frame):
             # if Big Ace (11) is under 21 and under 17 hit
             elif(self.dealer_card_totalA < 17 and self.dealer_card_totalA < 21):
                 self.dealer_hit()
-               
+            #if 21 with Big Ace Hold
+            elif self.dealer_card_totalA==21:
+                break
             # if little Ace (1) is under 21 and under 17 hit
             elif(self.dealer_card_totala < 17 and self.dealer_card_totala < 21):
                 self.dealer_hit()
