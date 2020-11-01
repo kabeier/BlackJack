@@ -113,7 +113,6 @@ class BlackJack(Frame):
         random.shuffle(self.deck)
 
     def dealer_play(self):
-        print(self.dealer_cards)
         self.kill_hit_hold_buttons()
         #define when dealer takes a hit
         while((self.dealer_card_totalA < 17 and self.dealer_card_totalA < 21) or (self.dealer_card_totala < 17 and self.dealer_card_totala < 21)):
@@ -287,8 +286,14 @@ class BlackJack(Frame):
     def kill_game_screen(self):
         for button in self.play_screen_contents:
             button.destroy()
+    def dealer_flip_hold_card(self):
+        self.dealer_number_of_cards=1
+        for card in self.dealer_cards:
+            self.make_dealer_card_show(card)
+            self.dealer_number_of_cards+=1
 
     def show_end_match_choices(self):
+        self.dealer_flip_hold_card()
         #Add Spade cards image for end screen
         new_game_image = Image.open('./images/honors_spade-14.png')
         ngi_width, ngi_height = new_game_image.size
