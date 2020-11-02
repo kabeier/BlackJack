@@ -6,7 +6,6 @@ import os.path
 from os import path
 import json
 import random
-import time
 
 class BlackJack(Frame):
     def __init__(self, root):
@@ -93,7 +92,7 @@ class BlackJack(Frame):
             button.destroy()
 
     def make_deck(self):
-        if(not self.deck):
+        if(not self.deck or len(self.deck)<=1):
             #make all the card values
             card_values=[]
             for i in range(2,15):
@@ -310,9 +309,12 @@ class BlackJack(Frame):
         self.last_game_winnings=self.winnings
     
     def kill_game_screen(self):
+        #removes all items from game screen
         for button in self.play_screen_contents:
             button.destroy()
+
     def dealer_flip_hold_card(self):
+        #has the dealer show its hold card
         self.dealer_number_of_cards=1
         for card in self.dealer_cards:
             self.make_dealer_card_show(card)
@@ -480,6 +482,7 @@ class BlackJack(Frame):
         self.build_play_screen()
         if(self.dealer_card_totala) > 21:
             self.dealer_busted=True
+        
 
     def deal_hand(self):
         #picks card and cars to list add to number of cards put card on screen, update teh display points then updates the GUI and checks for Blackjack
